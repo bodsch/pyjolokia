@@ -149,11 +149,14 @@ class Jolokia:
 
             responseStream = urlopen(request, timeout=self.timeout)
             jsonData = responseStream.read()
+
         except Exception as e:
             raise JolokiaError('Could not connect. Got error %s' % (e))
         finally:
             if responseStream != None:
                 responseStream.close()
+        # else:
+        #     responseStream.close()
 
         try:
             pythonDict = json.loads(jsonData.decode())
