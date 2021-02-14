@@ -155,8 +155,6 @@ class Jolokia:
         finally:
             if responseStream != None:
                 responseStream.close()
-        # else:
-        #     responseStream.close()
 
         try:
             pythonDict = json.loads(jsonData.decode())
