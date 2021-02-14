@@ -137,6 +137,9 @@ class Jolokia:
                           )
                         ).encode()).decode()
 
+
+        responseStream = None
+
         try:
             request = Request(self.url, jdata,
                               {'content-type': 'application/json'})
@@ -149,8 +152,9 @@ class Jolokia:
 
         except Exception as e:
             raise JolokiaError('Could not connect. Got error %s' % (e))
-        else:
-            responseStream.close()
+        finally:
+            if responseStream != None:
+                responseStream.close()
 
         try:
             pythonDict = json.loads(jsonData.decode())
@@ -194,6 +198,9 @@ class Jolokia:
         if not isinstance(self.data, list):
             self.data = list()
         self.data.append(new_response)
+
+    def clear_requests(self):
+        self.data = {}
 
     def getRequests(self):
         response = self.__getJson()
