@@ -42,3 +42,23 @@ jobs:
         run: |
           ls -l ;
           pylint pyjolokia.py
+
+  setup:
+    name: "python: ${{ matrix.python-version }}"
+    needs:
+      - lint
+
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version:
+          - "3.7"
+          - "3.8"
+          - "3.9"
+
+    setps:
+      - name: run setup install
+        run: |
+          python setup.py install
