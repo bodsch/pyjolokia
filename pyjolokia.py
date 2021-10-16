@@ -142,11 +142,10 @@ class Jolokia:
             if self.auth_config['auth']['username'] and self.auth_config['auth']['password']:
 
                 authheader = base64.standard_b64encode(
-                    ('{}:{}'.format(
-                        self.auth_config['auth']['username'],
-                        self.auth_config['auth']['password']
-                    )
-                    ).encode()).decode()
+                    (
+                        f"{self.auth_config['auth']['username']}:{self.auth_config['auth']['password']}"
+                    ).encode()
+                ).decode()
 
         response_stream = None
 
@@ -161,7 +160,7 @@ class Jolokia:
             json_data = response_stream.read()
 
         except Exception as error:
-            raise JolokiaError('Could not connect. Got error {}'.format(error))
+            raise JolokiaError(f"Could not connect. Got error {error}")
         finally:
             if response_stream is not None:
                 response_stream.close()
@@ -170,9 +169,9 @@ class Jolokia:
             python_dict = json.loads(json_data.decode())
         except Exception as error:
             raise JolokiaError(
-                "Could not decode into json. \
-                Is Jolokia running at {}. \
-                Got error {}.".format(self.url, error))
+                f"Could not decode into json. \
+                Is Jolokia running at {self.url}. \
+                Got error {error}.")
         return python_dict
 
     def __mkrequest(self, req_type, **kwargs):
