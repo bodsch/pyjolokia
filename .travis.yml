@@ -4,8 +4,11 @@ python:
   - "3.6"
   - "3.7"
   - "3.8"
+  - "3.9"
+
 script: python setup.py test
 install:
     python setup.py install
+
 before_script:
     - if [[ $TRAVIS_PYTHON_VERSION == '3'* ]]; then 2to3 --write --nobackups .; fi
