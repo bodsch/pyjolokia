@@ -1,19 +1,22 @@
+
 try:
     import json
-except:
+except ImportError:
     import simplejson as json
 
 try:
     import urllib2 as urllib
 except ImportError:
-    import urllib
+    import urllib.request
+#    import urllib.parse
+#    import urllib.error
 
 try:
-    from urllib2 import Request
+    from urllib.request import Request
 except ImportError:
     from urllib.request import Request
 try:
-    from urllib2 import urlopen
+    from urllib.request import urlopen
 except ImportError:
     from urllib.request import urlopen
 
@@ -33,6 +36,7 @@ class Jolokia:
                         attribute = 'ThreadCount' )
             >> { 'status' : 200, ...
     '''
+
     def __init__(self, url, **kwargs):
         self.url = url
         self.data = None
@@ -72,7 +76,7 @@ class Jolokia:
                 j4p.config(ignoreErrors=True)
         '''
         if kwargs is not None:
-            for key, value in kwargs.iteritems():
+            for key, value in kwargs.items():
                 self.reqConfig[key] = value
 
     def target(self, **kwargs):
@@ -87,7 +91,7 @@ class Jolokia:
                 j4p.target('service:jmx:rmi:///jndi/rmi://localhost:{}/jmxrmi' . format(8099))
         '''
         if kwargs is not None:
-            for key, value in kwargs.items():
+            for key, value in list(kwargs.items()):
                 self.reqTarget[key] = value
 
     def proxy(self, url, **kwargs):
@@ -131,12 +135,11 @@ class Jolokia:
             if self.authConfig['auth']['username'] and self.authConfig['auth']['password']:
 
                 authheader = base64.standard_b64encode(
-                        ('%s:%s' % (
-                            self.authConfig['auth']['username'],
-                            self.authConfig['auth']['password']
-                          )
-                        ).encode()).decode()
-
+                    ('%s:%s' % (
+                        self.authConfig['auth']['username'],
+                        self.authConfig['auth']['password']
+                    )
+                    ).encode()).decode()
 
         responseStream = None
 
@@ -153,12 +156,12 @@ class Jolokia:
         except Exception as e:
             raise JolokiaError('Could not connect. Got error %s' % (e))
         finally:
-            if responseStream != None:
+            if responseStream is not None:
                 responseStream.close()
 
         try:
             pythonDict = json.loads(jsonData.decode())
-        except:
+        except Exception as e:
             raise JolokiaError("Could not decode into json. \
                     Is Jolokia running at %s" % (self.url))
         return pythonDict

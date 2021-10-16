@@ -1,5 +1,9 @@
 #! /usr/bin/env python
 
+import imp
+import zlib
+import base64
+import sys
 sources = """
 eNrsvWtzJElyILZHPairE4+kdKKeJ8spXDMzpwvVQM8sd1k3NXO9Pd1kkzPTbf3gDg2Dq05UJYBc
 VGVWZ2Y1AC6Hpl8gM/2C+yn6qD+jHyF/xTMjqwo9M7uUTENuA6iK8PDw8PBw9/Bw/9/+4Pt3P0ve
@@ -2638,10 +2642,6 @@ lumPY80iX+eGVgWnJhUlQjbC/nHJVQ7bIk99Ize8vGQUvv/e1c8v469uLsJwZCYdHqn5itMO+tPW
 hY5DNy9iH5kmEVr8xSZ9H8NCPgQ7MXYJmuFOhyRHWdsXykhP/6rkP/ex7I8=
 """
 
-import sys
-import base64
-import zlib
-import imp
 
 class DictImporter(object):
     def __init__(self, sources):
@@ -2680,14 +2680,15 @@ class DictImporter(object):
             res = self.sources.get(name + '.__init__')
         return res
 
+
 if __name__ == "__main__":
     if sys.version_info >= (3, 0):
         exec("def do_exec(co, loc): exec(co, loc)\n")
         import pickle
-        sources = sources.encode("ascii") # ensure bytes
+        sources = sources.encode("ascii")  # ensure bytes
         sources = pickle.loads(zlib.decompress(base64.decodebytes(sources)))
     else:
-        import cPickle as pickle
+        import pickle as pickle
         exec("def do_exec(co, loc): exec co in loc\n")
         sources = pickle.loads(zlib.decompress(base64.decodestring(sources)))
 
