@@ -58,7 +58,7 @@ jobs:
           - "3.8"
           - "3.9"
 
-    setps:
+    steps:
       - name: run setup install
         run: |
           python setup.py install
