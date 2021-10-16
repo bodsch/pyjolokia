@@ -143,7 +143,8 @@ class Jolokia:
 
                 authheader = base64.standard_b64encode(
                     (
-                        f"{self.auth_config['auth']['username']}:{self.auth_config['auth']['password']}"
+                        f"{self.auth_config['auth']['username']}"
+                        f":{self.auth_config['auth']['password']}"
                     ).encode()
                 ).decode()
 
@@ -231,6 +232,7 @@ class Jolokia:
 class JolokiaError(Exception):
     """
     """
+
     def __init__(self, message):
         self.message = message
 
