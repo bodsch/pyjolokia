@@ -38,12 +38,14 @@ class Jolokia:
     '''
 
     def __init__(self, url, **kwargs):
+        """
+        """
         self.url = url
         self.data = None
-        self.proxyConfig = {}
-        self.authConfig = {}
-        self.reqConfig = {}
-        self.reqTarget = {}
+        self.proxy_config = {}
+        self.auth_config = {}
+        self.req_config = {}
+        self.req_target = {}
 
         self.timeout = kwargs.get('timeout', 10)
 
@@ -58,11 +60,11 @@ class Jolokia:
                 j4p.auth(httpusername='user',httppassword='password')
 
         '''
-        self.authConfig['auth'] = {}
+        self.auth_config['auth'] = {}
         if 'httpusername' in kwargs:
-            self.authConfig['auth']['username'] = kwargs.get('httpusername')
+            self.auth_config['auth']['username'] = kwargs.get('httpusername')
         if 'httppassword' in kwargs:
-            self.authConfig['auth']['password'] = kwargs.get('httppassword')
+            self.auth_config['auth']['password'] = kwargs.get('httppassword')
 
     def config(self, **kwargs):
         '''
@@ -77,7 +79,7 @@ class Jolokia:
         '''
         if kwargs is not None:
             for key, value in kwargs.items():
-                self.reqConfig[key] = value
+                self.req_config[key] = value
 
     def target(self, **kwargs):
         '''
@@ -92,7 +94,7 @@ class Jolokia:
         '''
         if kwargs is not None:
             for key, value in list(kwargs.items()):
-                self.reqTarget[key] = value
+                self.req_target[key] = value
 
     def proxy(self, url, **kwargs):
         '''
@@ -108,40 +110,42 @@ class Jolokia:
                            password = 'somePassword')
 
         '''
-        self.proxyConfig['target'] = {}
-        self.proxyConfig['target']['url'] = url
+        self.proxy_config['target'] = {}
+        self.proxy_config['target']['url'] = url
         if 'user' in kwargs:
-            self.proxyConfig['target']['user'] = kwargs.get('user')
+            self.proxy_config['target']['user'] = kwargs.get('user')
         if 'password' in kwargs:
-            self.proxyConfig['target']['password'] = kwargs.get('password')
+            self.proxy_config['target']['password'] = kwargs.get('password')
 
-    def __getJson(self):
+    def __get_json(self):
+        """
+        """
         if isinstance(self.data, dict):
-            mainRequest = self.data.copy()
-            mainRequest.update(self.proxyConfig)
+            main_request = self.data.copy()
+            main_request.update(self.proxy_config)
         else:
-            mainRequest = []
+            main_request = []
             for request in self.data:
                 request = request.copy()
-                request.update(self.proxyConfig)
-                mainRequest.append(request)
+                request.update(self.proxy_config)
+                main_request.append(request)
 
-        jdata = json.dumps(mainRequest).encode('utf-8')
+        jdata = json.dumps(main_request).encode('utf-8')
 
         authheader = None
 
-        if self.authConfig:
+        if self.auth_config:
 
-            if self.authConfig['auth']['username'] and self.authConfig['auth']['password']:
+            if self.auth_config['auth']['username'] and self.auth_config['auth']['password']:
 
                 authheader = base64.standard_b64encode(
                     ('%s:%s' % (
-                        self.authConfig['auth']['username'],
-                        self.authConfig['auth']['password']
+                        self.auth_config['auth']['username'],
+                        self.auth_config['auth']['password']
                     )
                     ).encode()).decode()
 
-        responseStream = None
+        response_stream = None
 
         try:
             request = Request(self.url, jdata,
@@ -150,63 +154,73 @@ class Jolokia:
             if authheader:
                 request.add_header("Authorization", 'Basic ' + authheader)
 
-            responseStream = urlopen(request, timeout=self.timeout)
-            jsonData = responseStream.read()
+            response_stream = urlopen(request, timeout=self.timeout)
+            json_data = response_stream.read()
 
         except Exception as e:
             raise JolokiaError('Could not connect. Got error %s' % (e))
         finally:
-            if responseStream is not None:
-                responseStream.close()
+            if response_stream is not None:
+                response_stream.close()
 
         try:
-            pythonDict = json.loads(jsonData.decode())
+            python_dict = json.loads(json_data.decode())
         except Exception as e:
             raise JolokiaError("Could not decode into json. \
                     Is Jolokia running at %s" % (self.url))
-        return pythonDict
+        return python_dict
 
     def __mkrequest(self, type, **kwargs):
-        newRequest = {}
-        newRequest['type'] = type
-        newRequest['config'] = self.reqConfig
-        newRequest['target'] = self.reqTarget
+        """
+        """
+        new_request = {}
+        new_request['type'] = type
+        new_request['config'] = self.req_config
+        new_request['target'] = self.req_target
 
         if type != 'list':
-            newRequest['mbean'] = kwargs.get('mbean')
+            new_request['mbean'] = kwargs.get('mbean')
         else:
-            newRequest['path'] = kwargs.get('path')
+            new_request['path'] = kwargs.get('path')
 
         if type == 'read':
-            newRequest['attribute'] = kwargs.get('attribute')
-            newRequest['path'] = kwargs.get('path')
+            new_request['attribute'] = kwargs.get('attribute')
+            new_request['path'] = kwargs.get('path')
         elif type == 'write':
-            newRequest['attribute'] = kwargs.get('attribute', '')
-            newRequest['value'] = kwargs.get('value', '')
-            newRequest['path'] = kwargs.get('path', '')
+            new_request['attribute'] = kwargs.get('attribute', '')
+            new_request['value'] = kwargs.get('value', '')
+            new_request['path'] = kwargs.get('path', '')
         elif type == 'exec':
-            newRequest['operation'] = kwargs.get('operation')
-            newRequest['arguments'] = kwargs.get('arguments')
-        return newRequest
+            new_request['operation'] = kwargs.get('operation')
+            new_request['arguments'] = kwargs.get('arguments')
+        return new_request
 
     def request(self, type, **kwargs):
+        """
+        """
         if not isinstance(self.data, dict):
             self.data = {}
         self.data = self.__mkrequest(type, **kwargs)
-        response = self.__getJson()
+        response = self.__get_json()
         return response
 
     def add_request(self, type, **kwargs):
+        """
+        """
         new_response = self.__mkrequest(type, **kwargs)
         if not isinstance(self.data, list):
             self.data = list()
         self.data.append(new_response)
 
     def clear_requests(self):
+        """
+        """
         self.data = {}
 
-    def getRequests(self):
-        response = self.__getJson()
+    def get_requests(self):
+        """
+        """
+        response = self.__get_json()
         return response
 
 
