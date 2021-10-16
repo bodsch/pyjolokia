@@ -3,7 +3,7 @@ import sys
 
 kw = {}
 if sys.version_info >= (3,):
-        kw['use_2to3'] = True
+    kw['use_2to3'] = True
 
 
 class PyTest(Command):
@@ -22,6 +22,7 @@ class PyTest(Command):
                                  'runtests.py',
                                  'tests.py'])
         raise SystemExit(errno)
+
 
 setup(name='pyjolokia',
       version='0.3.1',
@@ -45,4 +46,4 @@ setup(name='pyjolokia',
           'Topic :: Software Development :: Libraries :: Java Libraries',
       ],
       **kw
-)
+      )
