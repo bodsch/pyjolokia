@@ -1,3 +1,6 @@
+#!/usr/bin/env python3
+
+# -*- coding: utf-8 -*-
 
 try:
     import json
@@ -157,24 +160,26 @@ class Jolokia:
             response_stream = urlopen(request, timeout=self.timeout)
             json_data = response_stream.read()
 
-        except Exception as e:
-            raise JolokiaError('Could not connect. Got error %s' % (e))
+        except Exception as error:
+            raise JolokiaError('Could not connect. Got error {}'.format(error))
         finally:
             if response_stream is not None:
                 response_stream.close()
 
         try:
             python_dict = json.loads(json_data.decode())
-        except Exception as e:
-            raise JolokiaError("Could not decode into json. \
-                    Is Jolokia running at %s" % (self.url))
+        except Exception as error:
+            raise JolokiaError(
+                "Could not decode into json. \
+                Is Jolokia running at {}. \
+                Got error {}.".format(self.url, error))
         return python_dict
 
-    def __mkrequest(self, type, **kwargs):
+    def __mkrequest(self, req_type, **kwargs):
         """
         """
         new_request = {}
-        new_request['type'] = type
+        new_request['type'] = req_type
         new_request['config'] = self.req_config
         new_request['target'] = self.req_target
 
@@ -195,19 +200,19 @@ class Jolokia:
             new_request['arguments'] = kwargs.get('arguments')
         return new_request
 
-    def request(self, type, **kwargs):
+    def request(self, req_type, **kwargs):
         """
         """
         if not isinstance(self.data, dict):
             self.data = {}
-        self.data = self.__mkrequest(type, **kwargs)
+        self.data = self.__mkrequest(req_type, **kwargs)
         response = self.__get_json()
         return response
 
-    def add_request(self, type, **kwargs):
+    def add_request(self, req_type, **kwargs):
         """
         """
-        new_response = self.__mkrequest(type, **kwargs)
+        new_response = self.__mkrequest(req_type, **kwargs)
         if not isinstance(self.data, list):
             self.data = list()
         self.data.append(new_response)
@@ -225,6 +230,8 @@ class Jolokia:
 
 
 class JolokiaError(Exception):
+    """
+    """
     def __init__(self, message):
         self.message = message
 
