@@ -25,8 +25,8 @@ jobs:
     steps:
       - name: check out the codebase.
         uses: actions/checkout@v2
-        with:
-          path: 'pyjolokia'
+        # with:
+        #   path: 'pyjolokia'
 
       - name: set up python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
@@ -40,5 +40,5 @@ jobs:
 
       - name: analysing the code with pylint
         run: |
-          ls -l
+          ls -l ;
           pylint pyjolokia.py
