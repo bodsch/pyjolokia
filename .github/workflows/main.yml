@@ -40,4 +40,5 @@ jobs:
 
       - name: analysing the code with pylint
         run: |
+          ls -l
           pylint pyjolokia.py
