@@ -142,7 +142,7 @@ class Jolokia:
             if self.auth_config['auth']['username'] and self.auth_config['auth']['password']:
 
                 authheader = base64.standard_b64encode(
-                    ('%s:%s' % (
+                    ('{}:{}'.format(
                         self.auth_config['auth']['username'],
                         self.auth_config['auth']['password']
                     )
@@ -214,7 +214,7 @@ class Jolokia:
         """
         new_response = self.__mkrequest(req_type, **kwargs)
         if not isinstance(self.data, list):
-            self.data = list()
+            self.data = []
         self.data.append(new_response)
 
     def clear_requests(self):
