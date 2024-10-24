@@ -32,7 +32,7 @@ class PyTest(Command):
 
 setup(
     name='pyjolokia',
-    version='0.4.0',
+    version='0.4.1',
     description='Pure Python based Jolokia client',
     author='Colin Wood',
     license="Apache License Version 2.0",
@@ -46,11 +46,11 @@ setup(
     cmdclass={'test': PyTest},
     classifiers=[
         'Development Status :: 4 - Beta'
-        'Programming Language :: Python :: 3.5',
-        'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
         'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: 3.11',
+        'Programming Language :: Python :: 3.12',
         'Topic :: Software Development :: Libraries :: Java Libraries',
     ],
     **kw
