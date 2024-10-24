@@ -4,8 +4,9 @@ from setuptools import setup, Command
 
 kw = {}
 
-#if sys.version_info >= (3,):
+# if sys.version_info >= (3,):
 #    kw['use_2to3'] = True
+
 
 class PyTest(Command):
     user_options = []
@@ -17,14 +18,14 @@ class PyTest(Command):
         pass
 
     def run(self):
-        #import sys
+        # import sys
         import subprocess
         errno = subprocess.call(
-          [
-              sys.executable,
-              'runtests.py',
-              'tests.py'
-          ]
+            [
+                sys.executable,
+                'runtests.py',
+                'tests.py'
+            ]
         )
         raise SystemExit(errno)
 
